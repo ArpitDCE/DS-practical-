@@ -1,0 +1,62 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a Node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to insert a new node at the end of the list
+void append(struct Node** head_ref, int new_data) {
+    // Allocate memory for the new node
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    // Set the data of the new node
+    new_node->data = new_data;
+    
+    // If the linked list is empty, make the new node as head
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        // Make the new node point to itself to form a circular list
+        new_node->next = new_node;
+        return;
+    }
+
+    // Else, traverse till the last node
+    struct Node* last = (*head_ref)->next;
+    while (last->next != *head_ref) {
+        last = last->next;
+    }
+    // Change the next of the last node to point to the new node
+    last->next = new_node;
+    // Make the new node point back to the head to form a circular list
+    new_node->next = *head_ref;
+}
+
+// Function to display the circular linked list
+void display(struct Node* head) {
+    struct Node* temp = head;
+    // Traverse the circular linked list and print each node's data
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("HEAD\n");
+}
+
+// Driver program
+int main() {
+    // Initialize an empty circular linked list
+    struct Node* head = NULL;
+
+    // Append some elements to the circular linked list
+    append(&head, 1);
+    append(&head, 2);
+    append(&head, 3);
+
+    // Display the circular linked list
+    printf("Circular linked list elements: ");
+    display(head);
+
+    return 0;
+}
