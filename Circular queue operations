@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the maximum size of the circular queue
+#define MAX_SIZE 5
+
+// Define the structure for the circular queue
+struct CircularQueue {
+    int* arr;
+    int front, rear;
+    int capacity;
+};
+
+// Function to create a circular queue
+struct CircularQueue* createCircularQueue(int capacity) {
+    struct CircularQueue* queue = (struct CircularQueue*)malloc(sizeof(struct CircularQueue));
+    queue->arr = (int*)malloc(capacity * sizeof(int));
+    queue->capacity = capacity;
+    queue->front = -1;
+    queue->rear = -1;
+    return queue;
+}
+
+// Function to check if the circular queue is full
+int isFull(struct CircularQueue* queue) {
+    return ((queue->rear + 1) % queue->capacity == queue->front);
+}
+
+// Function to check if the circular queue is empty
+int isEmpty(struct CircularQueue* queue) {
+    return (queue->front == -1);
+}
+
+// Function to add an element to the circular queue
+void enqueue(struct CircularQueue* queue, int item) {
+    if (isFull(queue)) {
+        printf("Queue is full\n");
+        return;
+    }
+    if (isEmpty(queue))
+        queue->front = 0;
+    queue->rear = (queue->rear + 1) % queue->capacity;
+    queue->arr[queue->rear] = item;
+}
+
+// Function to remove an element from the circular queue
+int dequeue(struct CircularQueue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    int item = queue->arr[queue->front];
+    if (queue->front == queue->rear) {
+        queue->front = -1;
+        queue->rear = -1;
+    } else {
+        queue->front = (queue->front + 1) % queue->capacity;
+    }
+    return item;
+}
+
+// Function to get the front element of the circular queue without removing it
+int front(struct CircularQueue* queue) {
+    if (isEmpty(queue)) {
+        printf("Queue is empty\n");
+        return -1;
+    }
+    return queue->arr[queue->front];
+}
+
+// Test function
+int main() {
+    struct CircularQueue* queue = createCircularQueue(MAX_SIZE);
+
+    // Add some elements to the circular queue
+    enqueue(queue, 10);
+    enqueue(queue, 20);
+    enqueue(queue, 30);
+
+    // Display the front element of the circular queue
+    printf("Front element of circular queue: %d\n", front(queue));
+
+    // Remove elements from the circular queue and display them
+    printf("Dequeueing elements from circular queue: ");
+    while (!isEmpty(queue)) {
+        printf("%d ", dequeue(queue));
+    }
+    printf("\n");
+
+    // Try to dequeue from an empty circular queue
+    dequeue(queue);
+
+    return 0;
+}
